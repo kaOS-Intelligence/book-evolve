@@ -1,7 +1,69 @@
 # @kaos-intelligence/book-evolve
 
-Developmental editor powered by a 3-model evolutionary council. Transforms raw
-dictated transcripts into polished book prose in the author's own voice.
+> A developmental editor that argues with itself until the prose is yours.
+
+[![npm version](https://img.shields.io/npm/v/@kaos-intelligence/book-evolve.svg?color=cb3837)](https://www.npmjs.com/package/@kaos-intelligence/book-evolve)
+[![npm downloads](https://img.shields.io/npm/dm/@kaos-intelligence/book-evolve.svg)](https://www.npmjs.com/package/@kaos-intelligence/book-evolve)
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](#license)
+[![platform: macOS · Linux](https://img.shields.io/badge/platform-macOS%20%C2%B7%20Linux-lightgrey.svg)](#requirements)
+[![node: ≥18](https://img.shields.io/badge/node-%E2%89%A518-green.svg)](#requirements)
+[![python: ≥3.10](https://img.shields.io/badge/python-%E2%89%A53.10-blue.svg)](#requirements)
+
+**Book Evolve** is a command-line developmental editor that turns raw dictated
+transcripts into polished book prose. Three models draft each chapter in
+parallel — a **council**. A **judge** scores every draft on six axes. The
+strongest candidate goes back for another round, and another, until the work
+clears the bar — in the author's voice, not the model's.
+
+```
+                 ┌─────────────┐
+                 │  the seed   │   your dictation + reference prose
+                 └──────┬──────┘
+                        │
+          ┌─────────────┼─────────────┐
+          ▼             ▼             ▼
+   ┌────────────┐┌────────────┐┌────────────┐
+   │ COUNCIL_1  ││ COUNCIL_2  ││ COUNCIL_3  │   three drafts, blind
+   └─────┬──────┘└─────┬──────┘└─────┬──────┘
+         └─────────────┼─────────────┘
+                       ▼
+              ┌─────────────────┐
+              │     JUDGE       │   content fidelity · style match
+              │   six axes      │   literary quality · structure
+              │                 │   readability · novelty
+              └────────┬────────┘
+                       │  promotes the strongest
+                       ▼
+              ┌─────────────────┐
+              │   next round    │   …until target score or patience runs out
+              └────────┬────────┘
+                       ▼
+              ┌─────────────────┐
+              │  promoted MDX   │   output/chapters/*.mdx
+              └─────────────────┘
+```
+
+One model's first draft is never the answer. Disagreement is.
+
+---
+
+## Contents
+
+- [Quick start](#quick-start)
+- [Who is this for](#who-is-this-for)
+- [How it works](#how-it-works)
+- [Requirements](#requirements)
+- [Bring your own models](#bring-your-own-models)
+  - [Example: OpenRouter (hosted, one API key)](#example-openrouter-hosted-one-api-key)
+  - [Example: fully local (Ollama, no API key)](#example-fully-local-ollama-no-api-key)
+  - [Example: LiteLLM proxy (mix providers per seat)](#example-litellm-proxy-mix-providers-per-seat)
+- [Configuration](#configuration)
+- [Commands](#commands)
+- [Evolution controls](#evolution-controls)
+- [Observability](#observability)
+- [Showcase](#showcase)
+- [Development](#development)
+- [License](#license)
 
 ## Quick start
 
@@ -31,6 +93,28 @@ Between `setup` and `evolve`, do three things:
 Prefer a guided setup? Run `npx @kaos-intelligence/book-evolve` for
 interactive onboarding, or `npx @kaos-intelligence/book-evolve --web` for a
 browser wizard at `http://localhost:3010`.
+
+## Who is this for
+
+- **Authors who dictate.** If you've narrated a book into a recorder and
+  can't face turning 40 hours of transcript into prose, this is the path.
+  Book Evolve holds your whole manuscript in mind and shapes each chapter
+  in your voice — not a generic LLM's.
+- **Ghost writers.** Take a client's raw interviews, journal entries, or
+  dictation to a strong first draft the client will recognize as their own.
+  Seed it with their prior books; the judge learns their voice and refuses
+  to let the model talk over it.
+- **Developmental editors.** Run an author's chapters through a council that
+  never gets tired, never gets bored, and argues about literary quality on
+  every sentence. You review the promoted output, not the first draft.
+- **Publishers producing at scale.** The pipeline is scriptable and
+  observable (JSONL event stream). Wire it into your existing editorial
+  workflow — evolve, then have humans review the promoted MDX.
+
+Book Evolve is **opinionated** about voice (the judge enforces it), **agnostic**
+about models (bring any OpenAI-compatible endpoint), and **honest** about its
+limits (macOS/Linux, needs Python + an embeddings server, defaults are
+placeholders you must override).
 
 ## How it works
 
@@ -204,6 +288,11 @@ tail -f experiments/activity_stream.jsonl | jq .
 Set `ASI_EVOLVE_ACTIVITY_STREAM` to move the stream. Event writes are
 best-effort by design — a progress event can never take down a run.
 
+## Showcase
+
+See Book Evolve in context at **[kaosintelligence.com/book-evolve](https://kaosintelligence.com/book-evolve)**
+— part of the nine-instrument kaOS Intelligence publishing layer.
+
 ## Development
 
 The canonical home for this package is
@@ -218,7 +307,8 @@ pnpm test             # e2e CLI tests (includes a Python compile gate)
 ```
 
 The tarball build refuses to package anything that fails to byte-compile or
-contains personal content.
+contains personal content. See [CONTRIBUTING.md](https://github.com/kaOS-Intelligence/book-evolve/blob/main/CONTRIBUTING.md)
+for the development setup and pull-request conventions.
 
 ## License
 
