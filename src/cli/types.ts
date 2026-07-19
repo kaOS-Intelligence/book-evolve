@@ -15,7 +15,6 @@ export interface ProjectConfig {
 }
 
 export type ProviderType =
-  | 'sovereign'
   | 'cursor'
   | 'claude'
   | 'terminal'

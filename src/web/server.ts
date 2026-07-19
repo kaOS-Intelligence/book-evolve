@@ -345,7 +345,6 @@ function getOnboardingHTML(outputDir: string): string {
       <div class="field">
         <label for="provider">AI Intelligence</label>
         <select id="provider" name="provider">
-          <option value="sovereign">Sovereign (local LiteLLM + Ollama)</option>
           <option value="cursor">Cursor IDE</option>
           <option value="claude">Claude Desktop</option>
           <option value="terminal">Terminal / API key</option>

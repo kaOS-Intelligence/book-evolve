@@ -27,11 +27,11 @@ PROVISIONING experiment directory: book_evolution_chapter_{NN}.
 STEP {current}/{max_steps}  |  Best score: {best_score:.4f}  |  Target: {target_score}
 
   Council generating {council_size} candidates...
-  → DeepSeek V4 Pro (narrative-prose): done.
-  → Gemini 2.5 Pro (literary-editorial): done.
-  → MiniMax M3 (analytical-research): done.
+  → Seat 1 ({COUNCIL_MODEL_1}): done.
+  → Seat 2 ({COUNCIL_MODEL_2}): done.
+  → Seat 3 ({COUNCIL_MODEL_3}): done.
 
-  Judge scoring candidates on 5 axes...
+  Judge scoring candidates on 6 axes...
   → Candidate A: {score_a:.4f}
   → Candidate B: {score_b:.4f}
   → Candidate C: {score_c:.4f}
@@ -43,6 +43,7 @@ STEP {current}/{max_steps}  |  Best score: {best_score:.4f}  |  Target: {target_
     Literary Quality:     {literary_quality:.2f}
     Structural Coherence: {structural_coherence:.2f}
     Readability:          {readability:.2f}
+    Evolutionary Novelty: {evolutionary_novelty:.2f}
 
   Analyzer lesson: {lesson_summary}
 ```

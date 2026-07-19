@@ -164,23 +164,6 @@ function writeProviderFiles(config: ProjectConfig, outDir: string): void {
 
   // Write provider-specific setup
   switch (config.provider) {
-    case 'sovereign':
-      writeFileSync(
-        join(outDir, 'sovereign-project.json'),
-        `${JSON.stringify(
-          {
-            name: config.bookTitle,
-            kind: 'book-evolution',
-            config: 'config.yaml',
-            dictationDir: config.dictationDir,
-            referenceDir: config.referenceDir,
-          },
-          null,
-          2,
-        )}\n`,
-        'utf-8',
-      );
-      break;
     case 'cursor':
       writeFileSync(
         join(outDir, '.cursor', 'rules', 'book-evolve.mdc'),
@@ -221,30 +204,34 @@ ${generateActivationPrompt(config)}`,
  * placeholders all resolve these).
  */
 const ENV_AI_EXAMPLE = `# AI Provider Configuration
-# Copy to .env.ai and adjust — the CLI loads this file automatically for
-# every command (doctor, smoke, evolve, seed). Shell exports win over it.
+# Copy to .env.ai and fill in EVERY value. The CLI loads this file
+# automatically for every command (doctor, smoke, evolve, seed).
+# Shell exports win over this file.
 #
-# IMPORTANT: the model names below are route aliases on the author's own
-# LiteLLM proxy — they will NOT exist on your endpoint. Point
-# LITELLM_BASE_URL at any OpenAI-compatible endpoint and use ITS model ids.
+# This tool ships NO default models. Every value below is REQUIRED —
+# doctor and smoke will refuse to run until all five model ids and the
+# endpoint are set. Point LITELLM_BASE_URL at any OpenAI-compatible
+# endpoint and use model ids YOUR endpoint actually serves.
 
-# Any OpenAI-compatible chat-completions endpoint works (LiteLLM proxy,
-# vLLM, OpenRouter, LM Studio, Ollama's /v1, a cloud provider, ...).
-LITELLM_BASE_URL=http://127.0.0.1:4000/v1
-# Key resolution order: LITELLM_API_KEY, then ~/.litellm-master-key
-# (if the file exists), then "EMPTY" for proxies without auth.
+# Any OpenAI-compatible chat-completions endpoint:
+#   - OpenRouter:  https://openrouter.ai/api/v1
+#   - Ollama:      http://127.0.0.1:11434/v1
+#   - LiteLLM:     http://127.0.0.1:4000/v1
+#   - vLLM:        http://127.0.0.1:8000/v1
+#   - LM Studio:   http://127.0.0.1:1234/v1
+LITELLM_BASE_URL=
+# Bearer token for the endpoint. For Ollama use any non-empty string.
 LITELLM_API_KEY=
 
-# The 3-model council — any three models routed on your endpoint.
-# Three genuinely different models give the best editorial diversity,
-# but three copies of one strong model also works.
-COUNCIL_MODEL_1=deepseek-v4-pro-cloud
-COUNCIL_MODEL_2=mimo-v2.5-pro-cloud
-COUNCIL_MODEL_3=glm-5.2-cloud
-# Judge + manager roles (scoring). A strong reasoning model.
-JUDGE_MODEL=deepseek-v4-pro-cloud
-# Engineer + analyzer roles (high-volume, cheap).
-FAST_MODEL=deepseek-v4-flash-cloud
+# REQUIRED — the 3-model council. Three genuinely different models give
+# the best editorial diversity; three copies of one strong model also works.
+COUNCIL_MODEL_1=
+COUNCIL_MODEL_2=
+COUNCIL_MODEL_3=
+# REQUIRED — scoring judge + manager roles. A strong reasoning model.
+JUDGE_MODEL=
+# REQUIRED — engineer + analyzer roles (high-volume, cheap).
+FAST_MODEL=
 
 # --- Worked example: OpenRouter (one key, hundreds of models) ---------
 # LITELLM_BASE_URL=https://openrouter.ai/api/v1
@@ -258,11 +245,12 @@ FAST_MODEL=deepseek-v4-flash-cloud
 
 # --- Worked example: fully local via Ollama's OpenAI endpoint ---------
 # LITELLM_BASE_URL=http://127.0.0.1:11434/v1
-# COUNCIL_MODEL_1=llama3.3
-# COUNCIL_MODEL_2=qwen2.5:32b
-# COUNCIL_MODEL_3=gemma2:27b
-# JUDGE_MODEL=llama3.3
-# FAST_MODEL=llama3.2
+# LITELLM_API_KEY=ollama
+# COUNCIL_MODEL_1=qwen3:32b
+# COUNCIL_MODEL_2=llama3.3:70b
+# COUNCIL_MODEL_3=gemma3:27b
+# JUDGE_MODEL=qwen3:32b
+# FAST_MODEL=qwen3:8b
 # ----------------------------------------------------------------------
 
 # Embeddings via Ollama (semantic retrieval of your voice + content).
@@ -323,8 +311,7 @@ until the prose reads as though you wrote it from a clean draft.
 - Each chapter takes 2–15 minutes. Simple chapters converge quickly;
   complex narrative structures may take the full 10-evolution-step
   ceiling (roughly 25–30 minutes per chapter).
-- The output is MDX — ready for your publishing pipeline, sovereign
-  corpus, or any Markdown-based system.
+- The output is MDX — ready for any Markdown-based publishing system.
 - Chapters land in \`output/chapters/\` inside this project directory.
 - A \`toc.json\` and \`index.mdx\` are maintained automatically.
 
@@ -425,7 +412,8 @@ Or open \`book-evolve.md\` in your AI editor of choice and start a conversation.
 
 This project is configured for: **${config.provider}**
 
-For more information: https://kaoslibrary.com/book-evolve
+For full documentation, see the README:
+https://github.com/kaOS-Intelligence/book-evolve#readme
 `;
   writeFileSync(join(outDir, 'README.md'), readme, 'utf-8');
 }

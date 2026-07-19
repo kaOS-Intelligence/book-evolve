@@ -237,7 +237,11 @@ function checkContent(projectDir: string): CheckResult[] {
   ];
 }
 
-/** The council/judge/embedding models the pipeline will actually use. */
+/** The council/judge/embedding models the pipeline will actually use.
+ * No defaults — every model id must be set explicitly in .env.ai or the
+ * shell. The pipeline never assumes a provider; a stranger's first run
+ * fails fast with an actionable message instead of silently using a model
+ * id that resolves nowhere. */
 export function resolveModels(): {
   council: string[];
   judge: string;
@@ -246,14 +250,42 @@ export function resolveModels(): {
 } {
   return {
     council: [
-      process.env.COUNCIL_MODEL_1 || 'deepseek-v4-pro-cloud',
-      process.env.COUNCIL_MODEL_2 || 'mimo-v2.5-pro-cloud',
-      process.env.COUNCIL_MODEL_3 || 'glm-5.2-cloud',
+      process.env.COUNCIL_MODEL_1 || '',
+      process.env.COUNCIL_MODEL_2 || '',
+      process.env.COUNCIL_MODEL_3 || '',
     ],
-    judge: process.env.JUDGE_MODEL || 'deepseek-v4-pro-cloud',
-    fast: process.env.FAST_MODEL || 'deepseek-v4-flash-cloud',
+    judge: process.env.JUDGE_MODEL || '',
+    fast: process.env.FAST_MODEL || '',
     embed: embedModel(),
   };
+}
+
+/** Check that every required model env var is set. Returns a CheckResult
+ * per missing var so doctor can tell the user exactly what to fill in. */
+function checkModels(): CheckResult[] {
+  const required: { var: string; role: string }[] = [
+    { var: 'COUNCIL_MODEL_1', role: 'council seat 1' },
+    { var: 'COUNCIL_MODEL_2', role: 'council seat 2' },
+    { var: 'COUNCIL_MODEL_3', role: 'council seat 3' },
+    { var: 'JUDGE_MODEL', role: 'judge + manager' },
+    { var: 'FAST_MODEL', role: 'engineer + analyzer' },
+  ];
+  return required.map(({ var: varName, role }) => {
+    const value = process.env[varName];
+    if (value && value.trim()) {
+      return {
+        ok: true,
+        name: `${varName} (${role})`,
+        detail: value,
+      };
+    }
+    return {
+      ok: false,
+      name: `${varName} (${role})`,
+      detail: 'not set',
+      fix: `Edit .env.ai and set ${varName} to a model id your endpoint serves (see the "Bring your own models" section of the README for worked OpenRouter / Ollama / LiteLLM examples)`,
+    };
+  });
 }
 
 /**
@@ -273,7 +305,22 @@ export async function runSmoke(): Promise<boolean> {
   const models = resolveModels();
   const chatModels = [
     ...new Set([...models.council, models.judge, models.fast]),
-  ];
+  ].filter((id) => id.trim() !== '');
+
+  if (chatModels.length === 0) {
+    console.log(
+      chalk.red(
+        '  No models configured. Set COUNCIL_MODEL_1/2/3, JUDGE_MODEL, and FAST_MODEL in .env.ai first,',
+      ),
+    );
+    console.log(
+      chalk.dim(
+        '  then re-run smoke. See the README "Bring your own models" section for worked examples.',
+      ),
+    );
+    console.log('');
+    return false;
+  }
 
   let allOk = true;
 
@@ -398,6 +445,7 @@ export async function runDoctor(projectDir: string): Promise<boolean> {
     checkPython(),
     checkPipeline(projectDir),
     checkVenv(projectDir),
+    ...checkModels(),
     await checkEndpoint(
       'Model endpoint',
       `${litellmUrl()}/models`,

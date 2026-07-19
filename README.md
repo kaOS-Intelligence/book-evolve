@@ -149,12 +149,11 @@ placeholders you must override).
 
 ## Bring your own models
 
-The pipeline talks to one OpenAI-compatible `/chat/completions` endpoint and
-needs five model ids: three council seats, a judge, and a fast model. The
-default ids (`deepseek-v4-pro-cloud`, `mimo-v2.5-pro-cloud`, `glm-5.2-cloud`,
-`deepseek-v4-flash-cloud`) are naming conventions from the author's own
-LiteLLM proxy config — **you must override them with model ids your endpoint
-actually serves.** Three genuinely different models give the best editorial
+Book Evolve ships **no default models** — it never assumes a provider. The
+pipeline talks to one OpenAI-compatible `/chat/completions` endpoint and
+needs five model ids that you provide: three council seats, a judge, and a
+fast model. `doctor` and `smoke` refuse to run until all five are set in
+`.env.ai`. Three genuinely different models give the best editorial
 diversity, but three copies of one strong model also works.
 
 ### Example: OpenRouter (hosted, one API key)
@@ -219,13 +218,18 @@ commented `.env.ai.example` is written into every scaffolded project.
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `LITELLM_BASE_URL` | `http://127.0.0.1:4000/v1` | Any OpenAI-compatible chat endpoint |
+| `LITELLM_BASE_URL` | _(empty — required)_ | Any OpenAI-compatible chat endpoint |
 | `LITELLM_API_KEY` | `~/.litellm-master-key` if present, else `EMPTY` | Endpoint auth (bearer token) |
-| `COUNCIL_MODEL_1..3` | `deepseek-v4-pro-cloud` / `mimo-v2.5-pro-cloud` / `glm-5.2-cloud` | The 3 council seats — override these |
-| `JUDGE_MODEL` | `deepseek-v4-pro-cloud` | Scoring judge + manager |
-| `FAST_MODEL` | `deepseek-v4-flash-cloud` | Engineer + analyzer roles (high-volume, cheap) |
+| `COUNCIL_MODEL_1..3` | _(empty — required)_ | The 3 council seats |
+| `JUDGE_MODEL` | _(empty — required)_ | Scoring judge + manager |
+| `FAST_MODEL` | _(empty — required)_ | Engineer + analyzer roles (high-volume, cheap) |
 | `OLLAMA_BASE_URL` | `http://127.0.0.1:11434` | Embedding endpoint (optional) |
 | `OLLAMA_EMBED_MODEL` | `bge-m3:latest` | Embedding model |
+
+> **No default models.** Book Evolve never assumes a provider. The five model
+> variables and `LITELLM_BASE_URL` are required — `doctor` fails fast with the
+> exact variable name to fill in until they're set. See
+> [Bring your own models](#bring-your-own-models) for worked examples.
 
 Advanced variables (rarely needed — the CLI sets the first three per run from
 your project and `config.yaml`):

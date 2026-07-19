@@ -17,9 +17,6 @@ export async function launchProvider(
 
   try {
     switch (config.provider) {
-      case 'sovereign':
-        await launchSovereign(config, projectPath);
-        break;
       case 'cursor':
         await launchCursor(config, projectPath);
         break;
@@ -52,18 +49,6 @@ export async function launchProvider(
   }
 
   printNextSteps(config, projectPath);
-}
-
-async function launchSovereign(
-  config: ProjectConfig,
-  projectPath: string,
-): Promise<void> {
-  console.log(chalk.cyan('\n  Opening in Sovereign...'));
-  console.log(chalk.dim('  If Sovereign is running at :3100, navigate to:'));
-  console.log(chalk.bold('  http://localhost:3100/sovereign/evolve'));
-  console.log('');
-  console.log(chalk.dim('  Or run this command in Cursor:'));
-  console.log(chalk.white(`  open "${join(projectPath, 'book-evolve.md')}"`));
 }
 
 async function launchCursor(
@@ -137,22 +122,21 @@ async function launchAPI(
   console.log('');
   console.log(
     chalk.bold(
-      '  1. Copy .env.ai.example to .env.ai and adjust for your endpoint.',
+      '  1. Copy .env.ai.example to .env.ai and fill in every value.',
     ),
   );
   console.log(
     chalk.bold(
-      '  2. Default models (override via COUNCIL_MODEL_1..3, JUDGE_MODEL, FAST_MODEL):',
+      '  2. Set your models (COUNCIL_MODEL_1..3, JUDGE_MODEL, FAST_MODEL)',
     ),
   );
   console.log(
     chalk.dim(
-      '     Council: deepseek-v4-pro-cloud, mimo-v2.5-pro-cloud, glm-5.2-cloud',
+      '     to ids your endpoint serves — see .env.ai.example for worked OpenRouter / Ollama examples.',
     ),
   );
-  console.log(chalk.dim('     Judge:   deepseek-v4-pro-cloud'));
   console.log(
-    chalk.dim('     Embed:   bge-m3 via Ollama (OLLAMA_EMBED_MODEL)'),
+    chalk.dim('     Embeddings: bge-m3 via Ollama (OLLAMA_EMBED_MODEL)'),
   );
   console.log('');
   console.log(chalk.bold('  3. Verify the model path, then evolve:'));

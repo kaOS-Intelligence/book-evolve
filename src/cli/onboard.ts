@@ -89,11 +89,7 @@ export async function onboard(defaultOutput: string): Promise<ProjectConfig> {
       message: 'Which AI intelligence will you use for the editorial work?',
       choices: [
         {
-          name: 'Sovereign — local LiteLLM + Ollama on your machine',
-          value: 'sovereign',
-        },
-        {
-          name: 'Cursor IDE — DeepSeek V4 Pro / Claude in your editor',
+          name: 'Cursor IDE — your configured models in your editor',
           value: 'cursor',
         },
         { name: "Claude Desktop — Anthropic's desktop app", value: 'claude' },
