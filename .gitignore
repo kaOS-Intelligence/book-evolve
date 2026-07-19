@@ -1,0 +1,11 @@
+node_modules/
+*.tgz
+.env.ai
+.env.ai.local
+book-project/
+output/
+experiments/
+__pycache__/
+*.pyc
+.DS_Store
+# local pipeline build artifacts are committed (assets/pipeline/pipeline.tar.gz)

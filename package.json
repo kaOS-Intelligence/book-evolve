@@ -1,0 +1,66 @@
+{
+  "name": "@kaos-intelligence/book-evolve",
+  "version": "1.3.0",
+  "description": "Developmental editor powered by a 3-model evolutionary council. Transforms raw dictated transcripts into polished book prose in the author's own voice.",
+  "type": "module",
+  "license": "MIT",
+  "author": "kaOS Intelligence <hello@kaosintelligence.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kaOS-Intelligence/book-evolve.git"
+  },
+  "homepage": "https://github.com/kaOS-Intelligence/book-evolve#readme",
+  "bugs": {
+    "url": "https://github.com/kaOS-Intelligence/book-evolve/issues"
+  },
+  "bin": {
+    "book-evolve": "./dist/cli/index.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "assets"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "build:pipeline": "./scripts/build-pipeline-tarball.sh",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "prepublishOnly": "./scripts/build-pipeline-tarball.sh && tsc && vitest run"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "commander": "^12.1.0",
+    "inquirer": "^9.3.6",
+    "ora": "^8.1.0",
+    "which": "^4.0.0",
+    "tar": "^7.4.3"
+  },
+  "devDependencies": {
+    "@types/inquirer": "^9.0.7",
+    "@types/node": "^22.12.0",
+    "@types/tar": "^6.1.13",
+    "@types/which": "^3.0.4",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "book",
+    "evolution",
+    "developmental-editor",
+    "ai",
+    "council",
+    "dictation",
+    "writing",
+    "publishing"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}
